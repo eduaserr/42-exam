@@ -1,6 +1,6 @@
 ## Exam03
 
-### ft_printf
+### [ft_printf](./ft_printf)
 This mini ft_printf version has been done for learn purpposes only, not copy-paste!
 Shows how to do in an easy logical way.
 \
@@ -22,4 +22,4 @@ And you will have to be awarness about *va_list, va_start, va_arg and va_end,* a
 \
 Like in the original ft_printf.
 
-### get_next_line
+### [get_next_line](./get_next_line)
