@@ -1,6 +1,6 @@
-### Exam03
+## Exam03
 
-## [ft_printf](./ft_printf)
+# [ft_printf](./ft_printf)
 This mini ft_printf version has been done for learn purpposes only, not copy-pasting!
 It shows how to do it in an easy and logical way.
 \
@@ -21,7 +21,28 @@ And you will have to be aware of *va_list, va_start, va_arg and va_end,* and the
 \
 Just like in the original ft_printf.
 
-## [get_next_line](./get_next_line)
+
+### 🎯 **Fun Tips & Tricks** 💡
+
+	int main(void)
+	{
+	// 0 can be used as NULL
+	char *ptr = 0;         // Valid
+	char *ptr2 = NULL;     // Valid
+
+	// But they're different in other contexts
+	int num = 0;          // Valid
+	int num2 = NULL;      // Warning: makes no sense
+
+	// In conditions
+	if (!ptr)      // Valid: checks for NULL
+	if (ptr == 0)  // Valid: 0 represents NULL
+	if (!num)      // Valid: checks for 0
+
+	return (0);
+	}
+
+# [get_next_line](./get_next_line)
 This function reads a line from a file descriptor until a newline character is found.
 
 To open and close a file descriptor, you can use the `open` and `close` functions in your main program.
