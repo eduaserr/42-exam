@@ -4,8 +4,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifndef
-# define	BUFFER_SIZE
+#ifndef	BUFFER_SIZE
+# define	BUFFER_SIZE 42
 #endif
 
 void	ft_free_str(char **str)
@@ -58,7 +58,7 @@ char	*add_buffer(char *buffer, int fd)
 	char	*addbuff;
 	ssize_t	b_size;
 
-	addbuff = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1)
+	addbuff = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
 	if (!addbuff)
 		return (ft_free_str(&buffer), NULL);
 	b_size = 1;
@@ -70,7 +70,7 @@ char	*add_buffer(char *buffer, int fd)
 		addbuff[b_size] = '\0';
 		if (!buffer && b_size > 0)
 		buffer = ft_strdup(addbuff);
-		if (b_size > 0)
+		else if (b_size > 0)
 		buffer = ft_strjoin(buffer, addbuff);
 	}
 	return (ft_free_str(&addbuff), buffer);
