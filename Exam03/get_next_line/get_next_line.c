@@ -18,16 +18,69 @@ void	ft_free_str(char **str)
 }
 
 int		ft_strlen(char *str)
-{}
+{
+	int		i;
 
-char	*ft_strcpy(char *dst, char *src)
-{}
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
+void	ft_strcpy(char *dst, char *src, int len)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	if (!dst || !src)
+		return ;
+	while (len > 0 && src[i])
+	{
+		dst[i] = src[i++];
+		len--;
+	}
+	dst[i] = '\0';
+}
 
 char	*ft_strdup(char *str)
-{}
+{
+	char	*dup;
+	int		i;
+
+	if (!str)
+	return (NULL);
+	i = ft_strlen(str);
+	dup = (char *)malloc(sizeof(char) * i + 1);
+	if (!dup)
+		return (NULL);
+	ft_strcpy(dup, str, i);
+	return (dup);
+}
 
 char	*ft_substr(char *str, int start, int len)
-{}
+{
+	int		i;
+	char	*sub;
+
+	if (len <= 0)
+	return (NULL);
+	if (start < 0)
+		return (NULL);
+	if (!str)
+		return (NULL);
+	if (start >= ft_strlen(str))
+		return (NULL);
+	sub = (char *)malloc(sizeof(char) * len + 1);
+	if (!sub)
+		return (NULL);
+	i = 0;
+	while (str[start] && len--)
+		sub[i++] = str[start++];
+	sub[i] = '\0';
+	return (sub);
+}
 
 char	*ft_strjoin(char *dst, char* src)
 {
@@ -43,8 +96,7 @@ char	*ft_strchr(const char *str, int c)
 	while (str[i])
 	{
 		if (str[i] == (char)c)
-			return ((char *)&str[i]);
-		i++;
+			return ((char *)&str[i++]);
 	}
 	if ((char)c == '\0')
 		return ((char *)&str[i]);
