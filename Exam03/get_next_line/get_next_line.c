@@ -1,3 +1,8 @@
+
+//////////////////////////
+//	get_next_line.h		//
+//////////////////////////
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -7,7 +12,14 @@
 
 #ifndef	BUFFER_SIZE
 # define	BUFFER_SIZE 42
+
+char	*get_next_line(int fd);
 #endif
+
+//////////////////////////
+//	get_next_line.c		//
+//////////////////////////
+#include "get_next_line.h"
 
 void	ft_free_str(char **str)
 {
@@ -123,24 +135,19 @@ char	*add_buffer(int fd, char *buff)
 
 	add_buff = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
 	if (!add_buff)
-		return (NULL);
+		return (ft_free_str(&buff), NULL);
 	bytes_read = 1;
 	add_buff[0] = '\0';
 	while (!ft_strchr(add_buff, '\n') && bytes_read != 0)
 	{
 		bytes_read = read(fd, add_buff, BUFFER_SIZE);
 		if (bytes_read == -1)
-		{
-			ft_free_str(&add_buff);
-			ft_free_str(&buff);
-			return (NULL);
-		}
+			return (ft_free_str(&add_buff), ft_free_str(&buff), NULL);
 		add_buff[bytes_read] = '\0';
 		if (bytes_read > 0)
 			buff = ft_strjoin(buff, add_buff);
 	}
-	ft_free_str(&add_buff);
-	return (buff);
+	return (ft_free_str(&add_buff), buff);
 }
 
 char	*get_line(char *buffer, char **line)
@@ -148,10 +155,10 @@ char	*get_line(char *buffer, char **line)
 	char	*rest;
 	int		l_buff;
 
+	if (!buffer || !*line)
+		return (NULL);
 	rest = NULL;
 	l_buff = ft_strlen(buffer);
-	if (!buffer || !line)
-		return (NULL);
 	if (ft_strchr(buffer, '\n'))
 	{
 		rest = ft_strdup(ft_strchr(buffer, '\n') + 1);
@@ -161,8 +168,7 @@ char	*get_line(char *buffer, char **line)
 	{
 		*line = ft_substr(buffer, 0, l_buff);
 	}
-	ft_free_str(&buffer);
-	return (rest);
+	return (ft_free_str(&buffer), rest);
 }
 
 char	*get_next_line(int fd)
