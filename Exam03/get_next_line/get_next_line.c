@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -38,7 +39,8 @@ void	ft_strcpy(char *dst, char *src, int len)
 		return ;
 	while (len > 0 && src[i])
 	{
-		dst[i] = src[i++];
+		dst[i] = src[i];
+		i++;
 		len--;
 	}
 	dst[i] = '\0';
@@ -82,120 +84,97 @@ char	*ft_substr(char *str, int start, int len)
 	return (sub);
 }
 
-char	*ft_strjoin(char *dst, char* src)
+char	*ft_strjoin(char *s1, char *s2)
 {
+	char	*s3;
+	int		i;
+	int		j;
+
+	s3 = (char *)malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	if (!s3)
+	return (ft_free_str(&s1), NULL);
+	i = -1;
+	while (s1[++i])
+		s3[i] = s1[i];
+	j = 0;
+	while (s2[j])
+		s3[i++] = s2[j++];
+	s3[i] = '\0';
+	return (ft_free_str(&s1), s3);
 }
 
-char	*ft_strchr(const char *str, int c)
+char	*ft_strchr(char *str, int c)
 {
-	int	i;
+	int		i;
 
-	i = 0;
-	if (!str)
-		return (NULL);
-	while (str[i])
-	{
+	i = -1;
+	while (str[++i])
 		if (str[i] == (char)c)
-			return ((char *)&str[i++]);
-	}
-	if ((char)c == '\0')
+			return ((char *)&str[i]);
+	if (str[i] == (char)c)
 		return ((char *)&str[i]);
-	return (0);
+	return (NULL);
 }
-char	*get_line(char *buffer)
-{}
 
-char	*add_buffer(char *buffer, int fd)
+char	*add_buffer(int fd, char *buff)
 {
-	char	*addbuff;
-	ssize_t	b_size;
+	ssize_t		bytes_read;
+	char		*add_buff;
 
-	addbuff = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if (!addbuff)
-		return (ft_free_str(&buffer), NULL);
-	b_size = 1;
-	while (b_size > 0 && !ft_strchr(buffer, '\n'))
+	add_buff = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
+	if (!add_buff)
+		return (NULL);
+	bytes_read = 1;
+	add_buff[0] = '\0';
+	while (!ft_strchr(add_buff, '\n') && bytes_read != 0)
 	{
-		b_size = read(fd, addbuff, BUFFER_SIZE);
-		if (b_size < 0)
-			return (ft_free_str(&buffer),ft_free_str(&addbuff), NULL);
-		addbuff[b_size] = '\0';
-		if (!buffer && b_size > 0)
-		buffer = ft_strdup(addbuff);
-		else if (b_size > 0)
-		buffer = ft_strjoin(buffer, addbuff);
+		bytes_read = read(fd, add_buff, BUFFER_SIZE);
+		if (bytes_read == -1)
+		{
+			ft_free_str(&add_buff);
+			ft_free_str(&buff);
+			return (NULL);
+		}
+		add_buff[bytes_read] = '\0';
+		if (bytes_read > 0)
+			buff = ft_strjoin(buff, add_buff);
 	}
-	return (ft_free_str(&addbuff), buffer);
+	ft_free_str(&add_buff);
+	return (buff);
+}
+
+char	*get_line(char *buffer, char **line)
+{
+	char	*rest;
+	int		l_buff;
+
+	rest = NULL;
+	l_buff = ft_strlen(buffer);
+	if (!buffer || !line)
+		return (NULL);
+	if (ft_strchr(buffer, '\n'))
+	{
+		rest = ft_strdup(ft_strchr(buffer, '\n') + 1);
+		*line = ft_substr(buffer, 0, l_buff - ft_strlen(rest));
+	}
+	else
+	{
+		*line = ft_substr(buffer, 0, l_buff);
+	}
+	ft_free_str(&buffer);
+	return (rest);
 }
 
 char	*get_next_line(int fd)
 {
 	static char	*buffer;
+	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (!buffer || !ft_strchr(buffer, '\n'))
 		buffer = add_buffer(buffer, fd);
-	if (!buffer)
-		return (NULL);
-	return (get_line(buffer));
+		if (!buffer)
+			return (NULL);
+	return (get_line(buffer, &line));
 }
-
-int	main(int argc, char **argv)
-{
-	char *line;
-	int	i;
-	int	fd;
-
-	i = 0;
-	if (argc == 2)
-	{
-		fd = open(argv[1], O_RDONLY);
-		if (fd < 0)
-			return (1);
-		line = get_next_line(fd);
-		if (!line)
-			return (close(fd), 0);
-		while (line)
-		{
-			printf("%d : %s\n", i++, line);
-			free(line);
-			line = NULL;
-			line = get_next_line(fd);
-		}
-		printf("%d : %s\n", i, line);
-		free(line);
-		close(fd);
-	}
-	printf("\n");
-	return (0);
-}
-
-/*
- ->VARIABLE char static *buffer
-
-si no hay texto o archivo o no hay tamaño de lectura
-	return ()
-si no hay linea anterior(static) o no hay salto de linea en la static
-	añadir buffer en buffer
-
-	*añadir buffer(* buffer)
-	{
-		reservar memoria malloc(buffersize + 1)
-		si no funciona
-			return liberar estatica!!
-		forzamos bytes leidos a 1 para el while
-		el while (b_size > 0 && no hay salto de linea en estatica)
-			b_read = read(fd, addbuff, buffer_size)
-		  //bytes leidos = read(que leo, donde lo guardo, cuanto leo)
-		si no hay lectura(b_read < 0)
-			return (ft_free_str(buffer), ft_free_str(addbuff), NULL)
-		adbbuff[b_read] = '\0';
-		si hay lectura(b_read < 0)
-			buffer = strjoin(buffer, addbuff);
-	}
-comprobar !buffer)
-
-sacar lineas
-return linea)
-*/
