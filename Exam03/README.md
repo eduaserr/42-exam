@@ -62,3 +62,6 @@ The function must return the next line read from the file descriptor, or `NULL` 
 
 **Remember!**
 The last line doesn't need to be freed because get_next_line returns this line to the main function, and the caller  is responsible for managing this.
+
+---
+*Proyecto desarrollado como parte del curriculum de 42.*
