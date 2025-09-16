@@ -61,7 +61,7 @@ int	picoshell(char **cmds[])
 		if (prev_fd != -1)
 				close(prev_fd);
 		//si hay siguiente comando
-		if (cmd[i + 1])
+		if (cmds[i + 1])
 		{
 			//cerrar pipe de escritura
 			//guarda stdin en fd[0]
@@ -71,7 +71,7 @@ int	picoshell(char **cmds[])
 		i++;
 	}
 	// espera procesos hijos
-	while (wait(&status) != -1)
+	while (wait(&status) != -1) // || wait(&status) < 0
 	{
 		// si algun hijo sale != 0; exitcode = 1;
 		if (WIFEXITED(status) && WEXITSTATUS(status))
